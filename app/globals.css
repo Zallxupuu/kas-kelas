@@ -1,26 +1,81 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+@theme {
+  /* Dark Navy & Gold Glassmorphism Theme */
+  --color-glass-base: rgba(17, 24, 39, 0.6); /* Gray 900 semi-transparent */
+  --color-glass-light: rgba(30, 41, 59, 0.4); /* Slate 800 semi-transparent */
+  --color-glass-strong: rgba(15, 23, 42, 0.85);
+  
+  --color-income: #FBBF24; /* Gold/Amber 400 */
+  --color-income-light: rgba(251, 191, 36, 0.15);
+  
+  --color-expense: #F87171; /* Red 400 */
+  --color-expense-light: rgba(248, 113, 113, 0.15);
+  
+  /* Brand colors */
+  --color-brand-gold: #FBBF24;   /* Amber 400 */
+  --color-brand-navy: #0F172A;   /* Slate 900 */
+  
+  --color-background-start: #0B1121; /* Very dark navy */
+  --color-background-end: #020617;   /* Slate 950 */
+  
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: var(--color-background-start);
+  --foreground: #f8fafc; /* Slate 50 */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-slate-900/40 backdrop-blur-xl border border-slate-700/30 rounded-3xl overflow-hidden transition-all duration-300;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+  
+  .glass-card-strong {
+    @apply bg-slate-900/60 backdrop-blur-2xl border border-slate-600/30 rounded-[2rem] overflow-hidden transition-all duration-300;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .glass-button {
+    @apply rounded-xl flex items-center justify-center font-medium transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-slate-800/50 backdrop-blur-md border border-slate-700/40 hover:bg-slate-700/70;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .glass-input {
+    @apply w-full bg-slate-950/40 backdrop-blur-md border border-slate-700/40 rounded-xl px-4 py-3 outline-none focus:border-amber-400/50 focus:bg-slate-900/60 transition-all placeholder:text-slate-400/60;
+  }
+
+  .glass-nav {
+    @apply bg-[#0B1121]/90 backdrop-blur-2xl border-t border-slate-800/50;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+  }
+  
+  .glass-nav-item {
+    @apply flex flex-col items-center justify-center gap-1.5 flex-1 py-3 text-slate-500 transition-colors;
+  }
+  
+  .glass-nav-item.active {
+    @apply text-amber-400;
+  }
+  
+  .glass-fab {
+    @apply w-14 h-14 rounded-full flex items-center justify-center text-slate-900 relative overflow-hidden backdrop-blur-md border border-amber-200/50;
+    background: linear-gradient(135deg, var(--color-brand-gold), #F59E0B);
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.3);
+  }
+
+  .offline-banner {
+    @apply bg-amber-500/20 backdrop-blur-xl border-b border-amber-500/30 text-amber-200 text-sm font-medium;
+  }
 }
