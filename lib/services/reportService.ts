@@ -92,20 +92,25 @@ export const reportService = {
 
   async getCashFlowTrend(days: number = 30) {
     const endDate = new Date();
+    // Tambahkan 1 hari untuk safety margin zona waktu di filter Supabase
+    const safeEndDate = new Date(endDate);
+    safeEndDate.setDate(safeEndDate.getDate() + 1);
+    
     const startDate = subDays(endDate, days);
+    startDate.setHours(0, 0, 0, 0);
     
     const { data: transactions } = await supabase
       .from('transactions')
       .select('type, amount, date')
       .gte('date', startDate.toISOString())
-      .lte('date', endDate.toISOString());
+      .lte('date', safeEndDate.toISOString());
 
     const txs = transactions || [];
 
     // Group by day
     const trend = new Map<string, { income: number, expense: number }>();
     
-    // Initialize all days with 0
+    // Initialize all days with 0 (menggunakan timezone lokal)
     for (let i = 0; i <= days; i++) {
       const dateStr = format(subDays(endDate, days - i), 'yyyy-MM-dd');
       trend.set(dateStr, { income: 0, expense: 0 });
@@ -113,7 +118,10 @@ export const reportService = {
 
     // Populate data
     txs.forEach(t => {
-      const dateStr = t.date.substring(0, 10); // get YYYY-MM-DD
+      // Parse tanggal UTC ke lokal, lalu format ke YYYY-MM-DD
+      const localDate = new Date(t.date);
+      const dateStr = format(localDate, 'yyyy-MM-dd');
+      
       const existing = trend.get(dateStr);
       if (existing) {
         if (t.type === 'income') existing.income += t.amount;
