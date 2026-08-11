@@ -3,6 +3,7 @@
 import { GlassCard } from "./ui/GlassCard";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Cell } from "recharts";
 import { currencyFormatter } from "@/utils/formatters";
+import { useEffect, useState } from "react";
 
 interface ChartCardProps {
   data: { date: string; balance: number; income: number; expense: number }[];
@@ -10,6 +11,23 @@ interface ChartCardProps {
 }
 
 export function ChartCard({ data, title }: ChartCardProps) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <GlassCard className="p-5 h-64 flex flex-col bg-slate-900/40">
+        {title && <h3 className="font-semibold text-slate-300 mb-4">{title}</h3>}
+        <div className="flex-1 flex items-center justify-center text-slate-500 text-sm">
+          Memuat grafik...
+        </div>
+      </GlassCard>
+    );
+  }
+
   return (
     <GlassCard className="p-5 h-64 flex flex-col bg-slate-900/40">
       {title && <h3 className="font-semibold text-slate-300 mb-4">{title}</h3>}

@@ -14,11 +14,13 @@ export default function LaporanPage() {
   const [breakdown, setBreakdown] = useState<any[]>([]);
   const [monthlyStats, setMonthlyStats] = useState({ income: 0, expense: 0, balance: 0 });
   const [isExporting, setIsExporting] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
 
   useEffect(() => {
+    setIsMounted(true);
     const fetchData = async () => {
       const data = await reportService.getExpenseBreakdownByCategory(month, year);
       setBreakdown(data);
@@ -95,34 +97,41 @@ export default function LaporanPage() {
         {breakdown.length > 0 ? (
           <>
             <div className="h-48 w-full -ml-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(30, 30, 47, 0.8)', 
-                      backdropFilter: 'blur(10px)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      color: '#f8fafc'
-                    }} 
-                    itemStyle={{ color: '#f8fafc' }}
-                  />
-                  <Pie
-                    data={breakdown}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="total"
-                    nameKey="category.name"
-                  >
-                    {breakdown.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.category.colorHex || '#3b82f6'} opacity={0.8} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+              {!isMounted ? (
+                <div className="w-full h-full flex items-center justify-center text-slate-500 text-sm">
+                  Memuat grafik...
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'rgba(30, 30, 47, 0.8)', 
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        color: '#f8fafc'
+                      }} 
+                      itemStyle={{ color: '#f8fafc' }}
+                    />
+                    <Pie
+                      data={breakdown}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="total"
+                      nameKey="category.name"
+                      isAnimationActive={false}
+                    >
+                      {breakdown.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.category.colorHex || '#3b82f6'} opacity={0.8} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
             </div>
             
             <div className="space-y-3 mt-4">
