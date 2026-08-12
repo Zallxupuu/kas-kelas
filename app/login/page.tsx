@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuthStore } from "@/store/useAuthStore";
+import { comparePassword } from "@/utils/hash";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { GlassInput } from "@/components/ui/GlassInput";
 import { GlassButton } from "@/components/ui/GlassButton";
@@ -30,15 +31,22 @@ export default function LoginPage() {
     setLoading(true);
     
     try {
-      // Query ke tabel app_users di Supabase
+      // Query ke tabel app_users di Supabase berdasarkan username
       const { data, error } = await supabase
         .from("app_users")
         .select("*")
         .eq("username", username.toLowerCase())
-        .eq("password_pin", pin)
         .single();
         
       if (error || !data) {
+        setError("Username atau Password salah!");
+        setLoading(false);
+        return;
+      }
+      
+      // Verifikasi password
+      const isPasswordValid = comparePassword(pin, data.password_pin);
+      if (!isPasswordValid) {
         setError("Username atau Password salah!");
         setLoading(false);
         return;
@@ -50,6 +58,9 @@ export default function LoginPage() {
         username: data.username,
         role: data.role
       });
+      
+      // Set cookie for middleware
+      document.cookie = `auth_token=${data.id}; path=/; max-age=86400`; // 1 day
       
       // Arahkan ke dashboard
       router.push("/");

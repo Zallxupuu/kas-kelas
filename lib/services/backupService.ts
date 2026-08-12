@@ -1,5 +1,5 @@
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { reportService } from './reportService';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
@@ -61,7 +61,7 @@ export const backupService = {
       `Rp ${t.amount.toLocaleString('id-ID')}`
     ]);
 
-    (doc as any).autoTable({
+    autoTable(doc, {
       startY: 65,
       head: [['No', 'Tanggal', 'Keterangan', 'Jenis', 'Nominal']],
       body: tableData,

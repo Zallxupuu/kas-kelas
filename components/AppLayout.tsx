@@ -28,6 +28,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (mounted && !user && pathname !== "/login") {
+      document.cookie = "auth_token=; path=/; max-age=0";
       router.push("/login");
     }
   }, [mounted, user, pathname, router]);

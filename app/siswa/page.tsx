@@ -8,6 +8,7 @@ import { GlassButton } from "@/components/ui/GlassButton";
 import { Search, UserPlus, X, Edit2 } from "lucide-react";
 import { useState } from "react";
 import { userService } from "@/lib/services/userService";
+import { hashPassword } from "@/utils/hash";
 import { motion, AnimatePresence } from "framer-motion";
 import { User } from "@/types";
 
@@ -26,6 +27,7 @@ export default function SiswaPage() {
   const [formAbsen, setFormAbsen] = useState("");
   const [formPassword, setFormPassword] = useState("");
   const [formIsActive, setFormIsActive] = useState(true);
+  const [formRole, setFormRole] = useState<"anggota" | "bendahara" | "ketua">("anggota");
 
   const filteredUsers = users.filter(u => 
     u.name.toLowerCase().includes(search.toLowerCase())
@@ -39,6 +41,7 @@ export default function SiswaPage() {
     setFormName("");
     setFormAbsen("");
     setFormPassword("1234");
+    setFormRole("anggota");
     setFormIsActive(true);
     setIsModalOpen(true);
   };
@@ -49,6 +52,7 @@ export default function SiswaPage() {
     setFormName(user.name);
     setFormAbsen(user.absenNumber?.toString() || "");
     setFormPassword(user.password_pin);
+    setFormRole((user.role as any) || "anggota");
     setFormIsActive(user.isActive);
     setIsModalOpen(true);
   };
@@ -57,19 +61,28 @@ export default function SiswaPage() {
     if (!formName || !formAbsen) return;
     
     if (isEditing && editingUserId) {
-      await userService.updateUser(editingUserId, {
+      const updateData: any = {
         name: formName,
-        password_pin: formPassword,
         absenNumber: parseInt(formAbsen),
+        role: formRole,
         isActive: formIsActive
-      });
+      };
+      
+      // Jika password diisi atau kita sedang reset, hash passwordnya
+      if (formPassword) {
+        updateData.password_pin = hashPassword(formPassword);
+      }
+      
+      await userService.updateUser(editingUserId, updateData);
     } else {
       const generatedUsername = formName.toLowerCase().replace(/\s+/g, '');
+      const hashedPin = hashPassword(formPassword || "1234");
+      
       await userService.addUser({
         name: formName,
         username: generatedUsername,
-        password_pin: formPassword || "1234",
-        role: "anggota",
+        password_pin: hashedPin,
+        role: formRole,
         absenNumber: parseInt(formAbsen),
         isActive: true
       });
@@ -180,18 +193,30 @@ export default function SiswaPage() {
                       placeholder="Masukkan no absen..."
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-400 mb-1">Peran / Jabatan</label>
+                    <select 
+                      className="w-full bg-slate-900 border border-slate-700/50 rounded-xl px-4 py-3 outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-slate-200 shadow-lg appearance-none cursor-pointer custom-select"
+                      value={formRole}
+                      onChange={e => setFormRole(e.target.value as any)}
+                    >
+                      <option value="anggota" className="bg-slate-900 text-slate-200">Anggota</option>
+                      <option value="bendahara" className="bg-slate-900 text-slate-200">Bendahara</option>
+                      <option value="ketua" className="bg-slate-900 text-slate-200">Ketua</option>
+                    </select>
+                  </div>
                   
-                  {isEditing && (
-                    <div>
-                      <label className="block text-sm font-medium text-slate-400 mb-1">Password (PIN)</label>
-                      <GlassInput 
-                        type="text"
-                        value={formPassword}
-                        onChange={e => setFormPassword(e.target.value)}
-                        placeholder="Masukkan password baru..."
-                      />
-                    </div>
-                  )}
+                  {/* Selalu tampilkan field password supaya ketua/bendahara bisa buat password khusus saat add/edit */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-400 mb-1">Password (PIN)</label>
+                    <GlassInput 
+                      type="text"
+                      value={formPassword}
+                      onChange={e => setFormPassword(e.target.value)}
+                      placeholder="Masukkan password..."
+                    />
+                  </div>
 
                   {isEditing && (
                     <div className="flex items-center gap-3 mt-2">

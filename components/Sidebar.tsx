@@ -13,15 +13,17 @@ export function Sidebar() {
 
   const handleLogout = () => {
     logout();
+    document.cookie = "auth_token=; path=/; max-age=0";
     router.push("/login");
   };
 
   const tabs = [
-    { name: "Beranda", href: "/", icon: Home, roles: ["bendahara", "ketua", "anggota"] },
+    { name: "Dashboard", href: "/", icon: Home, roles: ["bendahara", "ketua", "anggota"] },
     { name: "Riwayat", href: "/riwayat", icon: List, roles: ["bendahara", "ketua", "anggota"] },
     { name: "Tambah Kas", href: "/tambah", icon: Plus, roles: ["bendahara"] },
     { name: "Siswa", href: "/siswa", icon: Users, roles: ["ketua"] },
-    { name: "Laporan", href: "/laporan", icon: Download, roles: ["bendahara", "ketua", "anggota"] },
+    { name: "Kas Akun", href: "/kas-akun", icon: Wallet, roles: ["bendahara", "ketua", "anggota"] },
+    { name: "Laporan", href: "/laporan", icon: Download, roles: ["bendahara", "ketua"] },
   ];
 
   const visibleTabs = tabs.filter(tab => user?.role && tab.roles.includes(user.role));

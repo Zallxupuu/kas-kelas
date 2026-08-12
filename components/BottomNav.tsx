@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Home, List, Users, Plus, Download } from "lucide-react";
+import { Home, List, Users, Plus, Download, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -12,10 +12,11 @@ export function BottomNav() {
   const { user } = useAuthStore();
 
   const tabs = [
-    { name: "BERANDA", href: "/", icon: Home, roles: ["bendahara", "ketua", "anggota"] },
+    { name: "DASHBOARD", href: "/", icon: Home, roles: ["bendahara", "ketua", "anggota"] },
     { name: "RIWAYAT", href: "/riwayat", icon: List, roles: ["bendahara", "ketua", "anggota"] },
     { name: "ANGGOTA", href: "/siswa", icon: Users, roles: ["ketua"] },
-    { name: "BACKUP", href: "/laporan", icon: Download, roles: ["bendahara", "ketua", "anggota"] },
+    { name: "KAS AKUN", href: "/kas-akun", icon: Wallet, roles: ["bendahara", "ketua", "anggota"] },
+    { name: "BACKUP", href: "/laporan", icon: Download, roles: ["bendahara", "ketua"] },
   ];
 
   const visibleTabs = tabs.filter(tab => user?.role && tab.roles.includes(user.role));

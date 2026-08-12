@@ -61,21 +61,21 @@ export default function LaporanPage() {
 
       <div className="flex gap-4 mb-6">
         <select 
-          className="flex-1 bg-slate-900/50 border-slate-700/50 rounded-2xl px-4 py-3 outline-none focus:border-brand-purple transition-all text-slate-200 shadow-[inset_4px_4px_10px_rgba(0,0,0,0.4),inset_-4px_-4px_10px_rgba(255,255,255,0.03)]"
+          className="flex-1 bg-slate-900 border border-slate-700/50 rounded-2xl px-4 py-3 outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-slate-200 shadow-lg appearance-none cursor-pointer custom-select"
           value={month}
           onChange={(e) => setMonth(Number(e.target.value))}
         >
           {months.map((m, i) => (
-            <option key={i} value={i}>{m}</option>
+            <option key={i} value={i} className="bg-slate-900 text-slate-200">{m}</option>
           ))}
         </select>
         <select 
-          className="w-32 bg-slate-900/50 border-slate-700/50 rounded-2xl px-4 py-3 outline-none focus:border-brand-purple transition-all text-slate-200 shadow-[inset_4px_4px_10px_rgba(0,0,0,0.4),inset_-4px_-4px_10px_rgba(255,255,255,0.03)]"
+          className="w-32 bg-slate-900 border border-slate-700/50 rounded-2xl px-4 py-3 outline-none focus:border-brand-purple focus:ring-1 focus:ring-brand-purple transition-all text-slate-200 shadow-lg appearance-none cursor-pointer custom-select"
           value={year}
           onChange={(e) => setYear(Number(e.target.value))}
         >
           {[year - 1, year, year + 1].map(y => (
-            <option key={y} value={y}>{y}</option>
+            <option key={y} value={y} className="bg-slate-900 text-slate-200">{y}</option>
           ))}
         </select>
       </div>
