@@ -86,3 +86,63 @@ body {
     background-size: 1.5em 1.5em;
   }
 }
+
+/* ============================================================
+   Background Blobs — CSS-only animation (GPU-accelerated)
+   No JS loop → much lighter on mobile
+   ============================================================ */
+@keyframes blob-float-1 {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(20px, -30px); }
+}
+@keyframes blob-float-2 {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(-20px, 40px); }
+}
+@keyframes blob-scale {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.2); }
+}
+
+.blob-1 {
+  will-change: transform;
+  animation: blob-float-1 10s ease-in-out infinite;
+}
+.blob-2 {
+  will-change: transform;
+  animation: blob-float-2 15s ease-in-out infinite;
+}
+.blob-3 {
+  will-change: transform;
+  animation: blob-scale 12s ease-in-out infinite;
+}
+
+/* ============================================================
+   Mobile performance: reduce motion if user prefers or on
+   low-end devices (prefers-reduced-motion)
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .blob-1, .blob-2, .blob-3 {
+    animation: none;
+    will-change: auto;
+  }
+}
+
+/* ============================================================
+   Scrollbar styling (webkit)
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 9999px;
+}
+
+/* Prevent layout shift from scrollbar */
+html {
+  scrollbar-gutter: stable both-edges;
+}

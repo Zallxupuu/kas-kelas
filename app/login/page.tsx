@@ -59,8 +59,8 @@ export default function LoginPage() {
         role: data.role
       });
       
-      // Set cookie for middleware
-      document.cookie = `auth_token=${data.id}; path=/; max-age=86400`; // 1 day
+      // Set persistent cookie (30 hari) untuk middleware + auto-login
+      document.cookie = `auth_token=${data.id}; path=/; max-age=2592000; SameSite=Lax`; // 30 days
       
       // Arahkan ke dashboard
       router.push("/");
